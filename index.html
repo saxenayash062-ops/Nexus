@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nexus</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,7 +49,7 @@ h2{font-size:13px;color:var(--tx2);font-weight:400;margin:22px 16px 6px;text-tra
 .sheet-bg.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:var(--bg);border-radius:14px 14px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
 .sheet-bg.on .sheet{transform:none}
-.sheet h3{margin:0 0 12px;text-align:center;font-size:17px}
+.sheet{max-height:88vh;overflow:auto}.sheet h3{margin:0 0 12px;text-align:center;font-size:17px}
 input[type=text],input[type=number]{width:100%;border:0;background:var(--card);color:var(--tx);font:17px inherit;font-family:inherit;padding:12px 16px;border-radius:10px;margin-bottom:10px;outline:none}
 .sw{appearance:none;width:51px;height:31px;border-radius:16px;background:var(--fill);position:relative;transition:.2s;flex:none;margin:0}
 .sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:.2s}
@@ -58,148 +59,215 @@ input[type=text],input[type=number]{width:100%;border:0;background:var(--card);c
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translate(-50%,-80px);background:var(--card);color:var(--tx);padding:10px 18px;border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:15px;transition:transform .3s;z-index:9}
 .toast.on{transform:translate(-50%,0)}
 svg text{fill:var(--tx2);font:11px -apple-system,Helvetica,Arial,sans-serif}
+
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:0 0 12px}
+.seg button{flex:1;border:0;background:none;color:var(--tx);font:500 13px inherit;font-family:inherit;padding:6px 2px;border-radius:7px;cursor:pointer}
+.seg button.on{background:var(--card);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.chip{display:inline-block;font-size:13px;padding:4px 10px;border-radius:999px;margin:0 6px 6px 0;background:var(--fill)}
+.chip.ok{background:rgba(52,199,89,.18);color:var(--green)}.chip.no{background:rgba(255,149,0,.18);color:var(--orange)}
+.ring{width:64px;height:64px;flex:none}.ring text{font:700 18px -apple-system,Helvetica,Arial,sans-serif;fill:var(--tx)}
+.banner{background:var(--blue);color:#fff;border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;gap:12px;align-items:center}
+.banner .btn{background:#fff;color:var(--blue)}
+textarea{width:100%;border:0;background:var(--card);color:var(--tx);font:16px inherit;font-family:inherit;padding:12px 16px;border-radius:10px;margin-bottom:10px;outline:none;min-height:90px;resize:none}
+.fld{display:flex;align-items:center;gap:8px;padding:6px 16px;min-height:48px;position:relative}.fld+.fld::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.fld label{width:84px;color:var(--tx2);font-size:15px;flex:none}.fld input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:17px inherit;font-family:inherit;outline:none;padding:6px 0}
+.sheet{max-height:88vh;overflow:auto}
+.gt{margin:6px 0;font-size:15px}
+.lock{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px}.lock.on{display:flex}
+.dots span{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--tx);display:inline-block;margin:0 8px}.dots span.f{background:var(--tx)}
+.pad{display:grid;grid-template-columns:repeat(3,76px);gap:14px}.pad button{width:76px;height:76px;border-radius:50%;border:0;background:var(--fill);color:var(--tx);font:28px -apple-system,Helvetica,Arial,sans-serif;cursor:pointer}.pad button:active{opacity:.5}
+body.cover main,body.cover .tabs{visibility:hidden}
+input[type=date]{width:100%;border:0;background:var(--card);color:var(--tx);font:17px inherit;font-family:inherit;padding:12px 16px;border-radius:10px;margin-bottom:10px;min-height:46px}
 </style></head><body>
 <main>
-
-<section class="view on" id="v-today">
-  <div class="top"><div><h1 id="hi">Today</h1><p class="sub" id="date"></p></div><button class="gear" id="open-set" aria-label="Notification settings">⚙︎</button></div>
-  <div class="hero">
-    <div class="stat"><b id="s-apply">12</b><span>Applied today</span></div>
-    <div class="stat"><b id="s-goals">0%</b><span>Goals done</span></div>
-    <div class="stat"><b id="s-mail">0</b><span>Need action</span></div>
-  </div>
-  <h2>Waiting for your approval</h2>
-  <div class="group" id="approvals"></div>
-  <h2>Priority mail</h2>
-  <div class="group" id="mails"></div>
-  <h2>Today's goals</h2>
-  <div class="group" id="today-goals"></div>
-</section>
-
-<section class="view" id="v-goals">
-  <div class="top"><div><h1>Goals</h1><p class="sub">Tap + to log progress</p></div><button class="btn p" id="add-goal">New goal</button></div>
-  <div class="card"><div style="font-weight:600">Growth this week</div><div class="s" style="white-space:normal">Average goal completion per day</div><svg id="chart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Weekly growth line chart"></svg></div>
-  <h2>Your goals</h2>
-  <div class="group" id="goals"></div>
-</section>
-
-<section class="view" id="v-jobs">
-  <h1>Jobs</h1><p class="sub">Resume shortlist tracker</p>
-  <div class="hero">
-    <div class="stat"><b>41</b><span>Applied this week</span></div>
-    <div class="stat"><b>2</b><span>Shortlisted</span></div>
-    <div class="stat"><b>4.9%</b><span>Shortlist rate</span></div>
-  </div>
-  <h2>Strategy update</h2>
-  <div class="card">
-    <div style="font-weight:600;margin-bottom:4px">Shortlist rate is below your 10% target</div>
-    <div class="s" style="white-space:normal;margin-bottom:10px">Two weeks with no change, so Nexus switched approach:</div>
-    <div class="t" style="font-size:15px">• Rewrite the top summary line for each job description<br>• Move matching keywords into the first half of the resume<br>• Apply before 10 AM, when recruiters are most active<br>• Focus on 6 roles with the best match, not 40 broad ones</div>
-  </div>
-  <h2>Best chances today</h2>
-  <div class="group" id="chances"></div>
-  <h2>Applied today</h2>
-  <div class="group" id="applied"></div>
-</section>
-
-<section class="view" id="v-subs">
-  <h1>Subscriptions</h1><p class="sub" id="subtotal"></p>
-  <div class="group" id="subs"></div>
-  <p class="note">Renewals in the next 7 days are shown first.</p>
-</section>
+<section class="view on" id="v-today"></section>
+<section class="view" id="v-jobs"></section>
+<section class="view" id="v-goals"></section>
+<section class="view" id="v-ast"></section>
+<section class="view" id="v-more"></section>
 </main>
-
 <nav class="tabs"><div>
-  <button class="tab on" data-t="today"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Today</button>
-  <button class="tab" data-t="goals"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg>Goals</button>
-  <button class="tab" data-t="jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Jobs</button>
-  <button class="tab" data-t="subs"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>Subscriptions</button>
+<button class="tab on" data-t="today"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Today</button>
+<button class="tab" data-t="jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Jobs</button>
+<button class="tab" data-t="goals"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg>Goals</button>
+<button class="tab" data-t="ast"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Assistant</button>
+<button class="tab" data-t="more"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/></svg>More</button>
 </div></nav>
-
-<div class="sheet-bg" id="sheet-goal"><div class="sheet">
-  <h3>New goal</h3>
-  <input type="text" id="g-name" placeholder="Goal name, e.g. Apply to 10 jobs">
-  <input type="number" id="g-target" placeholder="Daily target, e.g. 10" inputmode="numeric">
-  <div class="btns"><button class="btn grow" data-close>Cancel</button><button class="btn p grow" id="g-save">Add goal</button></div>
-</div></div>
-
-<div class="sheet-bg" id="sheet-set"><div class="sheet">
-  <h3>Notifications</h3>
-  <div class="group">
-    <div class="row"><div class="grow t">App notifications</div><input type="checkbox" class="sw" checked></div>
-    <div class="row"><div class="grow"><div class="t">WhatsApp for urgent items</div><div class="s">Approvals that can't wait</div></div><input type="checkbox" class="sw" checked></div>
-    <div class="row"><div class="grow t">End-of-day summary</div><input type="checkbox" class="sw" checked></div>
-  </div>
-  <p class="note">These switches are a preview. Live alerts need the Nexus server.</p>
-  <div class="btns" style="margin-top:14px"><button class="btn p grow" data-close>Done</button></div>
-</div></div>
-
+<div class="sheet-bg" id="sh"><div class="sheet" id="shc"></div></div>
+<div class="lock" id="lock"><h1 style="font-size:24px" id="lt">Enter passcode</h1><div class="dots" id="dots"></div><div class="pad" id="pad"></div></div>
 <div class="toast" id="toast"></div>
-
 <script>
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let S={
- goals:[{n:'Apply to 10 jobs',t:10,d:6,c:'#007aff'},{n:'Learn 1 hour of SQL',t:1,d:0,c:'#af52de'},{n:'Log every expense',t:1,d:1,c:'#34c759'},{n:'Walk 8,000 steps',t:8000,d:5200,c:'#ff9500',step:1000}],
- hist:[38,52,47,61,58,66],
- mails:[{f:'Recruiter, TechNova',s:'Interview slot: confirm by 5 PM',u:1},{f:'HR, Finserve',s:'Share your updated resume',u:0},{f:'Bank',s:'Card bill due in 2 days',u:0}],
- appr:[{t:'Apply to 6 matched jobs',s:'Resume tailored for each'},{t:'Send follow-up to TechNova',s:'Draft ready'}]
-};
-try{const x=localStorage.getItem('nexus');if(x)S=JSON.parse(x)}catch(e){}
-const save=()=>{try{localStorage.setItem('nexus',JSON.stringify(S))}catch(e){}};
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1800)}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const day=()=>new Date().toISOString().slice(0,10);
+const ago=d=>Math.floor((Date.now()-new Date(d))/864e5);
+const SK=['python','sql','power bi','excel','data analysis','dashboard','kpi','reporting','reconciliation','secondary research','compliance','risk','third-party','vendor','stakeholder','coordination','aws','cloud','data engineering','powerpoint','word','c','documentation','audit','procurement','data visualization'];
+const ALL=SK.concat(['tableau','java','javascript','machine learning','etl','snowflake','azure','spark','looker','r','scala','sap','power automate','vba','statistics','a/b testing','product','cybersecurity','kyc','aml']);
+const SYN={'dashboards':'dashboard','kpis':'kpi','third party':'third-party','visualisation':'data visualization','visualization':'data visualization','tprm':'third-party','analytics':'data analysis','analyst':'data analysis','stakeholders':'stakeholder'};
+let S={prof:{name:'',email:'',phone:'',loc:'Gurgaon',link:''},skills:SK.slice(),
+jobs:[
+{id:1,t:'Risk Analyst',c:'Sample Corp A',u:'',d:'Third-party risk management, vendor due diligence, compliance reviews, secondary research, stakeholder coordination, reporting, Excel, Power BI.',st:'new',sample:1},
+{id:2,t:'Data Analyst',c:'Sample Corp B',u:'',d:'SQL, Python, Power BI dashboards, KPI reporting, data analysis, Excel. Tableau is a plus.',st:'new',sample:1},
+{id:3,t:'Cloud Data Engineer',c:'Sample Corp C',u:'',d:'AWS, Spark, Snowflake, ETL pipelines, Python, SQL, Java.',st:'new',sample:1}],
+goals:[{n:'Approve 5 jobs a day',t:5,d:0,auto:1,c:'#007aff'},{n:'Practise SQL 1 hour',t:1,d:0,c:'#af52de'},{n:'Get 2 interviews this month',t:2,d:0,c:'#34c759',m:1}],
+hist:{},sub:[['Netflix',649,'Oct 18','#e50914'],['Spotify',119,'Oct 21','#1db954'],['iCloud+',75,'Oct 25','#007aff'],['YouTube Premium',149,'Nov 2','#ff3b30'],['Claude Pro',1950,'Nov 5','#af52de']],seg:'new',last:day()};
+try{const x=localStorage.getItem('nexus2');if(x)S=Object.assign(S,JSON.parse(x))}catch(e){}
+const save=()=>{try{localStorage.setItem('nexus2',JSON.stringify(S))}catch(e){}};
 const pct=g=>Math.min(100,Math.round(g.d/g.t*100));
 const avg=()=>S.goals.length?Math.round(S.goals.reduce((a,g)=>a+pct(g),0)/S.goals.length):0;
+function newDay(){if(S.last!==day()){S.hist[S.last]=avg();S.goals.forEach(g=>{if(!g.m)g.d=0});S.last=day()}}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1900)}
+function score(j){const tx=(j.t+' '+j.d).toLowerCase();let f=new Set();
+ ALL.forEach(k=>{const re=new RegExp('(^|[^a-z])'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^a-z]|$)');if(re.test(tx))f.add(k)});
+ Object.keys(SYN).forEach(k=>{if(tx.includes(k))f.add(SYN[k])});
+ const m=[...f].filter(k=>S.skills.includes(k)),x=[...f].filter(k=>!S.skills.includes(k));
+ let sc=f.size?Math.round(100*m.length/(m.length+x.length*1.2)):0;
+ if(/analyst|risk|compliance|data/i.test(j.t))sc=Math.min(100,sc+6);
+ return{sc,m,x,low:f.size<3}}
+const chance=s=>s>=80?['High chance','var(--green)']:s>=60?['Good chance','var(--blue)']:['Low chance','var(--orange)'];
+function ring(s){const c=chance(s)[1],r=26,L=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--fill)" stroke-width="6"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${L*s/100} ${L}" transform="rotate(-90 32 32)"/><text x="32" y="38" text-anchor="middle">${s}</text></svg>`}
+function state(j){if(j.st==='applied'&&ago(j.ad)>14)return'noresp';return j.st}
+const active=j=>['applied','interview'].includes(state(j)),closed=j=>['rejected','noresp'].includes(state(j));
+function summary(j,r){const k=r.m.slice(0,4).join(', ');return `Analyst with hands-on experience in ${k||'data analysis and reporting'}, building dashboards and coordinating with stakeholders to deliver accurate, on-time results. Keen to contribute to ${j.c} as ${j.t}.`}
 
-function render(){
+const GCID='808115913563-0hl1p6eiodtop6aor25b0fqr5uhdf7c2.apps.googleusercontent.com';
+let MAIL={st:'off',items:[],msg:''},TOK=null,TC=null;
+function mscore(t){t=t.toLowerCase();let p=0;[['interview',6],['shortlist',6],['offer letter',6],['assessment',4],['recruiter',4],['hiring',3],['application',3],['resume',3],['job',2],['urgent',4],['deadline',4],['action required',4],['due',2],['asap',3],['reminder',2],['confirm',2]].forEach(a=>{if(t.includes(a[0]))p+=a[1]});return p}
+function gmInit(){if(TC)return true;if(!window.google||!google.accounts)return false;
+ TC=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:'https://www.googleapis.com/auth/gmail.readonly',callback:r=>{if(r&&r.access_token){TOK=r.access_token;try{localStorage.setItem('gm','1')}catch(e){}loadMail()}else{MAIL={st:'err',items:[],msg:'Gmail sign-in was cancelled.'};today()}},error_callback:()=>{MAIL={st:'err',items:[],msg:'The sign-in window was closed.'};today()}});return true}
+function gmConnect(){if(!gmInit())return toast('Google is still loading, try again');let seen=false;try{seen=localStorage.getItem('gm')}catch(e){}TC.requestAccessToken({prompt:seen?'':'consent'})}
+async function loadMail(){MAIL.st='loading';today();
+ try{const q=encodeURIComponent('is:unread newer_than:7d -category:promotions -category:social -category:forums'),H={Authorization:'Bearer '+TOK},B='https://gmail.googleapis.com/gmail/v1/users/me/messages';
+  const l=await(await fetch(B+'?maxResults=25&q='+q,{headers:H})).json();if(l.error)throw new Error(l.error.message);
+  const ms=await Promise.all((l.messages||[]).map(m=>fetch(B+'/'+m.id+'?format=metadata&metadataHeaders=From&metadataHeaders=Subject',{headers:H}).then(r=>r.json())));
+  MAIL.items=ms.map(m=>{const h=n=>((m.payload&&m.payload.headers||[]).find(x=>x.name===n)||{}).value||'';const sub=h('Subject'),fr=h('From').replace(/<.*>/,'').replace(/"/g,'').trim()||h('From');return{id:m.id,s:sub,f:fr,r:h('From'),p:mscore(sub+' '+fr)}}).filter(x=>x.p>0).sort((a,b)=>b.p-a.p).slice(0,6);await loadOrders(H,B);MAIL.st='ok'}
+ catch(e){MAIL.st='err';MAIL.msg='Could not read Gmail. Check that your email is added as a test user.'}
+ today()}
+function mailHtml(){let b;
+ if(MAIL.st==='off')b='<div class="row"><div class="grow"><div class="t">Connect Gmail</div><div class="s">Read-only. Mail stays on this phone.</div></div><button class="btn p" data-gm>Connect</button></div>';
+ else if(MAIL.st==='loading')b='<div class="row"><div class="s">Checking your inbox...</div></div>';
+ else if(MAIL.st==='err')b=`<div class="row"><div class="grow s" style="white-space:normal">${esc(MAIL.msg)}</div><button class="btn" data-gm>Retry</button></div>`;
+ else b=MAIL.items.length?MAIL.items.map(m=>{const hot=m.p>=6||/urgent|deadline/i.test(m.s),job=/interview|shortlist|recruit|hiring|application|resume|job|offer/i.test(m.s+m.f);return `<div class="row" data-gmo="${esc(m.id)}" style="cursor:pointer"><div class="ico" style="background:${hot?'var(--red)':'var(--blue)'}">${esc((m.f||'?')[0].toUpperCase())}</div><div class="grow"><div class="t" style="font-size:16px">${esc(m.f)}</div><div class="s">${esc(m.s)}</div></div>${job?'<span class="pill" style="background:var(--green)">Job</span>':''}<button class="btn" data-gmx="${esc(m.id)}">Done</button></div>`}).join(''):'<div class="row"><div class="s">No priority mail. Your inbox is calm.</div></div>';
+ return `<h2>Priority mail${MAIL.st==='ok'?' <span data-gm style="color:var(--blue);cursor:pointer;text-transform:none">Refresh</span>':''}</h2><div class="group">${b}</div>`}
+function rTop(){return `<div class="top"><div><h1>`}
+function today(){newDay();const q=S.jobs.filter(j=>j.st==='new').map(j=>({j,r:score(j)})).sort((a,b)=>b.r.sc-a.r.sc),hot=q.filter(x=>x.r.sc>=85);
  const h=new Date().getHours();
- $('#hi').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
- $('#date').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
- $('#s-goals').textContent=avg()+'%';
- $('#s-mail').textContent=S.mails.length+S.appr.length;
- $('#approvals').innerHTML=S.appr.length?S.appr.map((a,i)=>`<div class="row"><div class="grow"><div class="t">${esc(a.t)}</div><div class="s">${esc(a.s)}</div></div><div class="btns"><button class="btn" data-skip="${i}">Skip</button><button class="btn g" data-ok="${i}">Approve</button></div></div>`).join(''):'<div class="row"><div class="s">Nothing waiting. You are all caught up.</div></div>';
- $('#mails').innerHTML=S.mails.length?S.mails.map((m,i)=>`<div class="row"><div class="ico" style="background:${m.u?'var(--red)':'var(--blue)'}">${esc(m.f[0])}</div><div class="grow"><div class="t">${esc(m.f)}</div><div class="s">${esc(m.s)}</div></div><button class="btn" data-done="${i}">Done</button></div>`).join(''):'<div class="row"><div class="s">No mail needs action.</div></div>';
- const tg=S.goals.map((g,i)=>goalRow(g,i)).join('');
- $('#today-goals').innerHTML=tg||'<div class="row"><div class="s">Add your first goal in the Goals tab.</div></div>';
- $('#goals').innerHTML=tg||'<div class="row"><div class="s">No goals yet. Tap New goal.</div></div>';
- chart();
-}
-function goalRow(g,i){const p=pct(g);return `<div class="row"><div class="grow"><div class="t">${esc(g.n)}</div><div class="s">${g.d.toLocaleString()} of ${g.t.toLocaleString()}</div><div class="bar"><i style="width:${p}%;background:${p>=100?'var(--green)':g.c}"></i></div></div><button class="btn" data-inc="${i}" aria-label="Add progress">${p>=100?'✓':'+'}</button></div>`}
-function chart(){
- const pts=[...S.hist.slice(-6),avg()],days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].slice(0,0);
- const W=320,H=150,L=28,B=22,n=pts.length;
- const x=i=>L+i*(W-L-8)/(n-1),y=v=>8+(H-B-8)*(1-v/100);
- const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+ $('#v-today').innerHTML=`<h1>${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}</h1><p class="sub">${new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}</p>`+
+ (hot[0]?`<div class="banner"><div class="grow"><b>Apply now: ${esc(hot[0].j.t)}</b><div style="font-size:14px">${hot[0].r.sc}% match. Early applications get seen first.</div></div><button class="btn" data-open="${hot[0].j.id}">Review</button></div>`:'')+
+ `<div class="hero"><div class="stat"><b>${S.jobs.filter(j=>j.ad===day()).length}</b><span>Applied today</span></div><div class="stat"><b>${q.length}</b><span>To approve</span></div><div class="stat"><b>${avg()}%</b><span>Goals done</span></div></div>
+ ${weekCard()}${mailHtml()}<h2>Waiting for your approval</h2><div class="group">${q.length?q.slice(0,4).map(x=>jrow(x.j,x.r)).join(''):'<div class="row"><div class="s">Nothing waiting. Add a job in the Jobs tab.</div></div>'}</div>
+ <h2>Today's goals</h2><div class="group">${S.goals.map(grow).join('')}</div>
+ <h2>End of day</h2><div class="card"><div class="t">${S.jobs.filter(j=>j.ad===day()).length} applied today, ${S.jobs.filter(active).length} active in total</div><div class="s" style="white-space:normal">${best()}</div></div>`}
+function best(){const a=S.jobs.filter(active).map(j=>({j,r:score(j)})).sort((x,y)=>y.r.sc-x.r.sc)[0];return a?`Best chance: ${a.j.t} at ${a.j.c} (${a.r.sc}% match).`:'Approve a job to see where your chances are highest.'}
+function jrow(j,r){const c=chance(r.sc);return `<div class="row" data-open="${j.id}" style="cursor:pointer">${ring(r.sc).replace('class="ring"','class="ring" style="width:44px;height:44px"')}<div class="grow"><div class="t">${esc(j.t)}</div><div class="s">${esc(j.c)}${j.sample?' (sample)':''}</div></div><span class="pill" style="background:${c[1]}">${c[0].split(' ')[0]}</span></div>`}
+function grow(g,i){const p=pct(g);return `<div class="row"><div class="grow"><div class="t">${esc(g.n)}</div><div class="s">${g.d} of ${g.t}${g.auto?' (counts your approvals)':''}</div><div class="bar"><i style="width:${p}%;background:${p>=100?'var(--green)':g.c}"></i></div></div>${g.auto?'':`<button class="btn" data-inc="${S.goals.indexOf(g)}">${p>=100?'✓':'+'}</button>`}</div>`}
+function jobs(){const seg=S.seg,L=S.jobs.filter(j=>seg==='new'?j.st==='new':seg==='act'?active(j):closed(j));
+ const ap=S.jobs.filter(j=>j.st!=='new'),resp=ap.filter(j=>['interview','rejected'].includes(j.st)).length;
+ $('#v-jobs').innerHTML=`<div class="top"><div><h1>Jobs</h1><p class="sub">${ap.length} applied, ${resp} replied${ap.length?' ('+Math.round(100*resp/ap.length)+'% response)':''}</p></div><button class="btn p" data-add>Add job</button></div>
+ <div class="seg"><button data-seg="new" class="${seg==='new'?'on':''}">To approve</button><button data-seg="act" class="${seg==='act'?'on':''}">Active</button><button data-seg="cl" class="${seg==='cl'?'on':''}">Closed</button></div>
+ <div class="group">${L.length?L.map(j=>{const r=score(j);return jrow(j,r).replace(/<span class="pill.*?<\/span>/,seg==='new'?'':`<span class="val">${{applied:'Applied',interview:'Interview',rejected:'Rejected',noresp:'No reply'}[state(j)]}</span>`)}).join(''):'<div class="row"><div class="s">Nothing here yet.</div></div>'}</div>
+ ${seg==='cl'?'<p class="note">Applications with no reply after 14 days move here as No reply.</p>':''}`}
+function chart(){const h=Object.assign({},S.hist);h[day()]=avg();const ks=Object.keys(h).sort().slice(-7),pts=ks.map(k=>h[k]),n=pts.length,W=320,H=150,L=28,B=22;
+ const x=i=>n>1?L+i*(W-L-8)/(n-1):L+(W-L-8)/2,y=v=>8+(H-B-8)*(1-v/100);
  let s=[0,50,100].map(v=>`<line x1="${L}" x2="${W-8}" y1="${y(v)}" y2="${y(v)}" stroke="var(--sep)" stroke-width=".5"/><text x="0" y="${y(v)+4}">${v}</text>`).join('');
- s+=`<path d="${d} L${x(n-1)} ${y(0)} L${x(0)} ${y(0)}Z" fill="var(--blue)" opacity=".12"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
- s+=pts.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i==n-1?5:3}" fill="var(--blue)"/>`).join('');
- s+=pts.map((v,i)=>`<text x="${x(i)}" y="${H-5}" text-anchor="middle">${i==n-1?'Today':'-'+(n-1-i)+'d'}</text>`).join('');
- $('#chart').innerHTML=s;
-}
-const chances=[['Data Analyst, Infosys','Strong match',86],['Associate Engineer, TCS','Good match',74],['Business Analyst, Wipro','Good match',68],['QA Engineer, HCL','Fair match',52]];
-const applied=[['Data Analyst','Infosys','Applied 9:10'],['Business Analyst','Wipro','Applied 9:25'],['Associate Engineer','TCS','Applied 9:40'],['QA Engineer','HCL','Applied 10:05']];
-$('#chances').innerHTML=chances.map(c=>`<div class="row"><div class="grow"><div class="t">${c[0]}</div><div class="bar"><i style="width:${c[2]}%;background:${c[2]>70?'var(--green)':c[2]>60?'var(--blue)':'var(--orange)'}"></i></div></div><span class="val">${c[2]}%</span></div>`).join('');
-$('#applied').innerHTML=applied.map(a=>`<div class="row"><div class="grow"><div class="t">${a[0]}</div><div class="s">${a[1]}</div></div><span class="val">${a[2]}</span></div>`).join('')+'<div class="row"><div class="s">8 more applied. 12 total today.</div></div>';
-const subs=[['Netflix',649,'Oct 18','#e50914'],['Spotify',119,'Oct 21','#1db954'],['iCloud+',75,'Oct 25','#007aff'],['YouTube Premium',149,'Nov 2','#ff3b30'],['Claude Pro',1950,'Nov 5','#af52de']];
-$('#subs').innerHTML=subs.map(s=>`<div class="row"><div class="ico" style="background:${s[3]}">${s[0][0]}</div><div class="grow"><div class="t">${s[0]}</div><div class="s">Renews ${s[2]}</div></div><span class="val">₹${s[1].toLocaleString()}</span></div>`).join('');
-$('#subtotal').textContent='₹'+subs.reduce((a,s)=>a+s[1],0).toLocaleString()+' per month across '+subs.length+' subscriptions';
+ if(n>1){const d=pts.map((v,i)=>(i?'L':'M')+x(i)+' '+y(v)).join(' ');s+=`<path d="${d} L${x(n-1)} ${y(0)} L${x(0)} ${y(0)}Z" fill="var(--blue)" opacity=".12"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`}
+ s+=pts.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i==n-1?5:3}" fill="var(--blue)"/>`).join('')+ks.map((k,i)=>`<text x="${x(i)}" y="${H-5}" text-anchor="middle">${k.slice(8)}/${k.slice(5,7)}</text>`).join('');
+ return `<svg viewBox="0 0 320 150" width="100%" role="img" aria-label="Growth chart">${s}</svg>`+(n<2?'<div class="s" style="white-space:normal">Your line grows by one point every day you use Nexus.</div>':'')}
+function goals(){$('#v-goals').innerHTML=`<div class="top"><div><h1>Goals</h1><p class="sub">Aim: get shortlisted and land an interview</p></div><button class="btn p" data-addg>New goal</button></div><div class="card"><b>Growth</b><div class="s">Daily average of all goals</div>${chart()}</div><h2>Your goals</h2><div class="group">${S.goals.map(grow).join('')}</div>`}
+function more(){const p=S.prof,F=(k,l,t)=>`<div class="fld"><label>${l}</label><input data-p="${k}" value="${esc(p[k])}" placeholder="Add once" ${t||''}><button class="btn" data-copy="${k}">Copy</button></div>`;
+ $('#v-more').innerHTML=`<h1>More</h1><p class="sub">Your details stay on this phone only</p><h2>Application details</h2><div class="group">${F('name','Name')}${F('email','Email','type="email"')}${F('phone','Phone','type="tel"')}${F('loc','City')}${F('link','LinkedIn')}</div><p class="note">Type once, then tap Copy to paste into any application form.</p>
+ <h2>Skills used for matching</h2><div class="card">${S.skills.map(k=>`<span class="chip ok">${esc(k)}</span>`).join('')}</div>
+ <h2>Subscriptions, ₹${S.sub.reduce((a,s)=>a+s[1],0).toLocaleString()} a month</h2><div class="group">${S.sub.map(s=>`<div class="row"><div class="ico" style="background:${s[3]}">${s[0][0]}</div><div class="grow"><div class="t">${s[0]}</div><div class="s">Renews ${s[2]}</div></div><span class="val">₹${s[1].toLocaleString()}</span></div>`).join('')}</div>
+ <h2>Privacy</h2><div class="group"><div class="row"><div class="grow"><div class="t">Passcode lock</div><div class="s">Asks for a code when you open Nexus</div></div><button class="btn" data-pin>${getH()?'Remove':'Set'}</button></div></div><p class="note">Your data stays on this phone. Nothing is stored on GitHub.</p><h2>Alerts</h2><div class="group"><div class="row"><div class="grow"><div class="t">Best-match alerts</div><div class="s">Banner on Today for matches of 85% or more</div></div><span class="val">On</span></div></div><p class="note">Gmail mail is read on this phone only and is never saved or sent anywhere. Phone push alerts and job-portal tracking come later.</p>`}
+function sheet(h){$('#shc').innerHTML=h;$('#sh').classList.add('on')}
+const close=()=>$('#sh').classList.remove('on');
+function detail(id){const j=S.jobs.find(x=>x.id===id),r=score(j),c=chance(r.sc),st=state(j);
+ const notes=[];if(r.low)notes.push('The description is short, so this score is a rough guess.');if(r.x.length)notes.push('Missing: '+r.x.slice(0,3).join(', ')+'. Add them to your resume only if you really have them.');if(r.sc>=80)notes.push('Strong fit. Apply within 24 hours, early applications get seen first.');if(r.sc<60)notes.push('Weak fit. Skip it, or spend your time on a stronger match.');notes.push('Message the recruiter on LinkedIn after applying.');
+ sheet(`<h3>${esc(j.t)}</h3><div class="card" style="display:flex;gap:14px;align-items:center">${ring(r.sc)}<div><div class="t" style="color:${c[1]};font-weight:600">${c[0]}</div><div class="s">${esc(j.c)}</div></div></div>
+ <h2>Skills you match</h2><div>${r.m.map(k=>`<span class="chip ok">${esc(k)}</span>`).join('')||'<span class="s">None found</span>'}</div><h2>Skills you lack</h2><div>${r.x.map(k=>`<span class="chip no">${esc(k)}</span>`).join('')||'<span class="s">None found</span>'}</div>
+ <h2>Good to know</h2><div class="card">${notes.map(n=>`<div class="gt">• ${esc(n)}</div>`).join('')}</div>
+ <h2>Tailored summary for your resume</h2><div class="card"><div class="s" style="white-space:normal;color:var(--tx)">${esc(summary(j,r))}</div></div>
+ ${st==='new'?`<div class="btns" style="margin-top:14px"><button class="btn grow" data-skip="${id}">Skip</button><button class="btn g grow" data-approve="${id}">Approve and apply</button></div><p class="note">Approve copies the summary, then opens the application page.</p>`:`<h2>Status</h2><div class="seg">${[['applied','Waiting'],['interview','Interview'],['rejected','Rejected']].map(a=>`<button data-st="${id}|${a[0]}" class="${j.st===a[0]?'on':''}">${a[1]}</button>`).join('')}</div>${st==='noresp'?'<p class="note">No reply for over 14 days.</p>':''}`}`)}
+function addJob(){sheet(`<h3>Add job</h3><input type="text" id="j-t" placeholder="Job title"><input type="text" id="j-c" placeholder="Company"><input type="text" id="j-u" placeholder="Application link (optional)"><textarea id="j-d" placeholder="Paste the job description"></textarea><div class="btns"><button class="btn grow" data-close>Cancel</button><button class="btn p grow" id="j-save">Check match</button></div>`)}
+function addGoal(){sheet(`<h3>New goal</h3><input type="text" id="g-n" placeholder="Goal, e.g. Finish Power BI course"><input type="number" id="g-t" placeholder="Daily target" inputmode="numeric"><div class="btns"><button class="btn grow" data-close>Cancel</button><button class="btn p grow" id="g-save">Add goal</button></div>`)}
+function render(){today();jobs();goals();ast();more();save()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-t],[data-open],[data-seg],[data-add],[data-addg],[data-approve],[data-skip],[data-st],[data-inc],[data-copy],[data-gm],[data-gmx],[data-gmo],[data-close],#j-save,#g-save');if(!b){if(e.target.id==='sh')close();return}
+ const d=b.dataset;
+ if(d.t){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+d.t));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));scrollTo(0,0);return}
+ if(d.gm!==undefined)return gmConnect();
+ if(d.gmx){MAIL.items=MAIL.items.filter(m=>m.id!==d.gmx);today();return}
+ if(d.gmo)return draftSheet(d.gmo);
+ if(d.open)return detail(+d.open);
+ if(d.seg){S.seg=d.seg}
+ else if(d.add!==undefined)return addJob();
+ else if(d.addg!==undefined)return addGoal();
+ else if(d.close!==undefined)return close();
+ else if(d.approve){const j=S.jobs.find(x=>x.id===+d.approve),r=score(j);j.st='applied';j.ad=day();j.sc=r.sc;const g=S.goals.find(x=>x.auto);if(g)g.d++;
+  try{navigator.clipboard.writeText(summary(j,r))}catch(x){}
+  close();toast('Approved. Summary copied.');if(j.u&&/^https?:/.test(j.u))window.open(j.u,'_blank')}
+ else if(d.skip){S.jobs=S.jobs.filter(x=>x.id!==+d.skip);close();toast('Skipped')}
+ else if(d.st){const[i,v]=d.st.split('|'),j=S.jobs.find(x=>x.id===+i);j.st=v;if(v==='applied')j.ad=day();if(v==='interview'){const g=S.goals.find(x=>x.m);if(g)g.d=Math.min(g.t,g.d+1)}render();return detail(+i)}
+ else if(d.inc!==undefined){const g=S.goals[+d.inc];g.d=Math.min(g.t,g.d+(g.step||1))}
+ else if(d.copy){try{navigator.clipboard.writeText(S.prof[d.copy]||'');toast('Copied')}catch(x){toast('Copy not allowed here')}return}
+ else if(b.id==='j-save'){const t=$('#j-t').value.trim(),c=$('#j-c').value.trim(),dd=$('#j-d').value.trim();if(!t||!c||dd.length<20)return toast('Add title, company and the description');const id=Date.now();S.jobs.push({id,t,c,u:$('#j-u').value.trim(),d:dd,st:'new'});S.seg='new';render();return detail(id)}
+ else if(b.id==='g-save'){const n=$('#g-n').value.trim(),t=+$('#g-t').value;if(!n||!(t>0))return toast('Enter a goal and a target');S.goals.push({n,t,d:0,c:'#007aff'});close();toast('Goal added')}
+ render()});
+document.addEventListener('input',e=>{const k=e.target.dataset.p;if(k){S.prof[k]=e.target.value;save()}});
 
-document.addEventListener('click',e=>{
- const b=e.target.closest('button,.tab');if(!b)return;
- if(b.dataset.t){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.t));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));scrollTo(0,0);return}
- if(b.dataset.ok!==undefined){S.appr.splice(+b.dataset.ok,1);toast('Approved')}
- else if(b.dataset.skip!==undefined){S.appr.splice(+b.dataset.skip,1);toast('Skipped')}
- else if(b.dataset.done!==undefined){S.mails.splice(+b.dataset.done,1);toast('Marked done')}
- else if(b.dataset.inc!==undefined){const g=S.goals[+b.dataset.inc];g.d=Math.min(g.t,g.d+(g.step||1));if(g.d>=g.t)toast('Goal complete')}
- else if(b.id==='add-goal')return $('#sheet-goal').classList.add('on');
- else if(b.id==='open-set')return $('#sheet-set').classList.add('on');
- else if(b.id==='g-save'){const n=$('#g-name').value.trim(),t=+$('#g-target').value;if(!n||!(t>0))return toast('Enter a name and a target');S.goals.push({n,t,d:0,c:'#007aff'});$('#g-name').value='';$('#g-target').value='';$('#sheet-goal').classList.remove('on');toast('Goal added')}
- else if(b.dataset.close!==undefined){b.closest('.sheet-bg').classList.remove('on');return}
- else return;
- save();render();
-});
-document.querySelectorAll('.sheet-bg').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.classList.remove('on')}));
+const LK='nexus_pin';let pin='',mode='unlock',tmp='',hid=0;
+async function hash(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('nx|'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function getH(){try{return localStorage.getItem(LK)}catch(e){return null}}
+function drawDots(){$('#dots').innerHTML=[0,1,2,3].map(i=>`<span class="${i<pin.length?'f':''}"></span>`).join('')}
+function showLock(m){mode=m;pin='';tmp='';$('#lt').textContent={unlock:'Enter passcode',set:'Create a 4-digit passcode',remove:'Enter current passcode'}[m];drawDots();$('#lock').classList.add('on')}
+$('#pad').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].map(k=>`<button data-k="${k}">${k}</button>`).join('');
+$('#pad').addEventListener('click',async e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;
+ if(k==='✕'){if(mode!=='unlock')$('#lock').classList.remove('on');return}
+ if(k==='⌫')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;drawDots();if(pin.length<4)return;
+ const h=await hash(pin),cur=getH();
+ if(mode==='unlock'||mode==='remove'){if(h===cur){if(mode==='remove'){try{localStorage.removeItem(LK)}catch(x){}toast('Passcode removed');more()}$('#lock').classList.remove('on')}else toast('Wrong passcode');pin='';drawDots()}
+ else if(mode==='set'){tmp=pin;pin='';mode='confirm';$('#lt').textContent='Repeat passcode';drawDots()}
+ else if(mode==='confirm'){if(pin===tmp){try{localStorage.setItem(LK,h)}catch(x){}$('#lock').classList.remove('on');toast('Passcode set');more()}else{toast("Codes didn't match");showLock('set')}}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-pin]'))showLock(getH()?'remove':'set')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hid=Date.now();if(getH())document.body.classList.add('cover')}else{document.body.classList.remove('cover');if(getH()&&Date.now()-hid>30000)showLock('unlock')}});
+
+const ST=[['Instamart','https://www.swiggy.com/instamart/search?custom_back=true&query='],['Blinkit','https://blinkit.com/s/?q='],['Zepto','https://www.zepto.com/search?query='],['BigBasket','https://www.bigbasket.com/ps/?q='],['Amazon','https://www.amazon.in/s?k=']];
+const cp=t=>{try{navigator.clipboard.writeText(t);toast('Copied')}catch(e){toast('Copy not allowed here')}};
+async function loadOrders(H,B){try{const q=encodeURIComponent('(order OR shipped OR dispatched OR "out for delivery") newer_than:21d');const l=await(await fetch(B+'?maxResults=12&q='+q,{headers:H})).json();
+ const ms=await Promise.all((l.messages||[]).map(m=>fetch(B+'/'+m.id+'?format=metadata&metadataHeaders=From&metadataHeaders=Subject',{headers:H}).then(r=>r.json())));
+ MAIL.ord=ms.map(m=>{const h=n=>((m.payload&&m.payload.headers||[]).find(x=>x.name===n)||{}).value||'';const fr=h('From').replace(/<.*>/,'').replace(/"/g,'').trim();return{id:m.id,s:h('Subject'),f:fr}}).filter(x=>/amazon|flipkart|myntra|swiggy|zomato|blinkit|zepto|meesho|ajio|nykaa|bigbasket|instamart/i.test(x.f+x.s)&&/order|ship|dispatch|deliver/i.test(x.s)).slice(0,5)}catch(e){MAIL.ord=[]}}
+function weekCard(){const L=[],n=(MAIL.items||[]).length,hot=S.jobs.filter(j=>j.st==='new'&&score(j).sc>=80).length,od=(S.orders||[]).filter(o=>o.exp&&o.exp<day()).length,g=S.goals.filter(x=>pct(x)<100).length;
+ if(n)L.push(n+' priority mail'+(n>1?'s need':' needs')+' a reply');if(hot)L.push(hot+' strong job match'+(hot>1?'es':'')+' to approve');if(od)L.push(od+' order'+(od>1?'s':'')+' running late');if(g)L.push(g+' goal'+(g>1?'s':'')+' left today');
+ return `<h2>Top priorities</h2><div class="card">${L.length?L.map((x,i)=>`<div class="gt">${i+1}. ${esc(x)}</div>`).join(''):'<div class="s">All clear.</div>'}</div>`}
+function draftFor(m){const n=S.prof.name||'[Your name]',w=(m.f||'').split(' ')[0]||'there',t=(m.s+' '+m.f).toLowerCase();
+ if(/interview|shortlist|assessment/.test(t))return `Hi ${w},\n\nThank you for reaching out. I am happy to proceed. I am available on [day and time] and can adjust to your schedule. Please share the meeting link and anything I should prepare.\n\nRegards,\n${n}`;
+ if(/application|resume|recruit|hiring|job|offer/.test(t))return `Hi ${w},\n\nThank you for getting in touch. I am interested in this opportunity. My updated resume is attached, and I can speak at [day and time].\n\nRegards,\n${n}`;
+ if(/due|deadline|urgent|action required|reminder/.test(t))return `Hi ${w},\n\nThanks for the reminder. I will complete this by [date] and confirm once it is done. Please tell me if you need it sooner.\n\nRegards,\n${n}`;
+ return `Hi ${w},\n\nThank you for your email. I have noted this and will get back to you by [date].\n\nRegards,\n${n}`}
+function draftSheet(id){const m=MAIL.items.find(x=>x.id===id);if(!m)return;
+ sheet(`<h3>Reply draft</h3><div class="card"><div class="s" style="white-space:normal">${esc(m.s)}</div></div><h2>Draft</h2><textarea id="dr" style="min-height:190px">${esc(draftFor(m))}</textarea><div class="btns"><button class="btn grow" data-a="dcopy">Copy</button><button class="btn p grow" data-a="dgm|${esc(id)}">Open in Gmail</button></div><button class="btn" style="margin-top:10px;width:100%" data-a="dview|${esc(id)}">View original mail</button><p class="note">Edit the [brackets], then send it yourself.</p>`)}
+function ordNew(n,s,mid){window._mid=mid||'';sheet(`<h3>Track an order</h3><input type="text" id="o-n" placeholder="What did you order?" value="${esc(n||'')}"><input type="text" id="o-s" placeholder="Store, e.g. Amazon" value="${esc(s||'')}"><input type="text" id="o-i" placeholder="Order ID (optional)"><div class="s" style="margin:0 4px 4px">Expected delivery date</div><input type="date" id="o-d"><div class="btns"><button class="btn grow" data-close>Cancel</button><button class="btn p grow" data-a="ordsave">Track</button></div>`)}
+function supMsg(o){return `Hello,\n\nI placed an order for ${o.n} on ${o.s||'your store'}${o.i?' (order ID '+o.i+')':''}. It was expected by ${o.exp||'[date]'}, but the tracking has not updated. Please share the current status and a firm delivery date. If it cannot be delivered soon, please tell me the options to replace or refund it.\n\nThank you,\n${S.prof.name||'[Your name]'}`}
+function ast(){const sh=S.shop||[],od=S.orders||[],mo=((MAIL&&MAIL.ord)||[]).filter(x=>!od.some(o=>o.mid===x.id));
+ $('#v-ast').innerHTML=`<h1>Assistant</h1><p class="sub">Lists, orders and quick actions</p>
+ <h2>Shopping list</h2><div class="group"><div class="fld"><input id="sh-in" placeholder="Add an item, e.g. milk 1 litre"><button class="btn p" data-a="shadd">Add</button></div>${sh.map((x,i)=>`<div class="row" style="flex-wrap:wrap"><div class="grow t">${esc(x)}</div><button class="btn" data-a="shdel|${i}">✕</button><div style="width:100%">${ST.map(t=>`<a class="chip" style="text-decoration:none;color:var(--blue)" target="_blank" rel="noopener" href="${t[1]}${encodeURIComponent(x)}">${t[0]}</a>`).join('')}</div></div>`).join('')}</div>
+ <p class="note">Tap a store to see that item there and compare prices. You place the order yourself.</p>
+ <h2>Orders I am tracking</h2><div class="group">${od.map(o=>{const late=o.exp&&o.exp<day();return `<div class="row"><div class="grow"><div class="t">${esc(o.n)}</div><div class="s">${esc(o.s||'')}${o.exp?' · due '+esc(o.exp):''}</div></div>${late?'<span class="pill" style="background:var(--red)">Late</span>':''}<button class="btn" data-a="ordsup|${o.id}">Help</button><button class="btn g" data-a="orddone|${o.id}">Got it</button></div>`}).join('')||'<div class="row"><div class="s">No orders yet.</div></div>'}<div class="row"><button class="btn p" data-a="ordnew">Track an order</button></div></div>
+ ${mo.length?`<h2>Found in your mail</h2><div class="group">${mo.map(x=>`<div class="row"><div class="grow"><div class="t" style="font-size:16px">${esc(x.s)}</div><div class="s">${esc(x.f)}</div></div><button class="btn" data-a="ordmail|${esc(x.id)}">Track</button></div>`).join('')}</div>`:''}
+ <h2>Quick actions</h2><div class="group">${[['Book a movie','https://in.bookmyshow.com/'],['Order food','https://www.swiggy.com/'],['Groceries','https://www.swiggy.com/instamart'],['Track Amazon orders','https://www.amazon.in/gp/css/order-history']].map(a=>`<div class="row"><a class="t" style="color:var(--blue);text-decoration:none;flex:1" target="_blank" rel="noopener" href="${a[1]}">${a[0]}</a></div>`).join('')}</div>
+ <p class="note">I cannot call shops or place orders for you. For late orders, tap Help to get a ready message to send to support.</p>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const[a,x]=b.dataset.a.split('|');
+ if(a==='shadd'){const v=$('#sh-in').value.trim();if(!v)return;(S.shop=S.shop||[]).push(v)}
+ else if(a==='shdel')S.shop.splice(+x,1);
+ else if(a==='ordnew')return ordNew();
+ else if(a==='ordmail'){const o=MAIL.ord.find(y=>y.id===x);return ordNew(o&&o.s,o&&o.f,x)}
+ else if(a==='ordsave'){const n=$('#o-n').value.trim();if(!n)return toast('Enter what you ordered');(S.orders=S.orders||[]).push({id:Date.now(),n,s:$('#o-s').value.trim(),i:$('#o-i').value.trim(),exp:$('#o-d').value,mid:window._mid});close();toast('Tracking started')}
+ else if(a==='orddone'){S.orders=S.orders.filter(o=>o.id!==+x);toast('Marked delivered')}
+ else if(a==='ordsup'){const o=S.orders.find(y=>y.id===+x);return sheet(`<h3>Message for support</h3><textarea id="dr" style="min-height:200px">${esc(supMsg(o))}</textarea><div class="btns"><button class="btn grow" data-close>Close</button><button class="btn p grow" data-a="dcopy">Copy</button></div><p class="note">Paste this into the store's chat or email.</p>`)}
+ else if(a==='dcopy')return cp($('#dr').value);
+ else if(a==='dgm'){const m=MAIL.items.find(y=>y.id===x),to=(m.r.match(/<(.+)>/)||[0,m.r])[1];window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&su='+encodeURIComponent('Re: '+m.s)+'&body='+encodeURIComponent($('#dr').value),'_blank');return}
+ else if(a==='dview'){window.open('https://mail.google.com/mail/u/0/#inbox/'+x,'_blank');return}
+ save();ast();today()});
 render();
+if(getH())showLock("unlock");
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
-</script>
-</body></html>
+</script></body></html>
