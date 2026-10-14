@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nexus</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nexus">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f2f2f7">
+
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--tx:#000;--tx2:#6c6c70;--sep:rgba(60,60,67,.18);--blue:#007aff;--green:#34c759;--red:#ff3b30;--orange:#ff9500;--fill:rgba(120,120,128,.12);--bar:rgba(249,249,249,.88);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--tx:#fff;--tx2:#98989f;--sep:rgba(84,84,88,.6);--blue:#0a84ff;--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--fill:rgba(120,120,128,.24);--bar:rgba(29,29,31,.88)}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--tx:#fff;--tx2:#98989f;--sep:rgba(84,84,88,.6);--blue:#0a84ff;--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--fill:rgba(120,120,128,.24);--bar:rgba(29,29,31,.88)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:light dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:520px;margin:0 auto;padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+h1{font-size:34px;letter-spacing:.3px;margin:8px 0 2px;font-weight:700}
+.sub{color:var(--tx2);font-size:15px;margin:0 0 14px}
+h2{font-size:13px;color:var(--tx2);font-weight:400;margin:22px 16px 6px;text-transform:uppercase;letter-spacing:.3px}
+.group{background:var(--card);border-radius:12px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:11px 16px;min-height:48px;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.grow{flex:1;min-width:0}.t{font-size:17px}.s{font-size:14px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val{color:var(--tx2)}
+.ico{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;flex:none}
+.btn{border:0;background:var(--fill);color:var(--blue);font:600 15px inherit;font-family:inherit;border-radius:999px;padding:7px 14px;cursor:pointer}
+.btn.p{background:var(--blue);color:#fff}.btn.g{background:var(--green);color:#fff}
+.btn:active{opacity:.6}
+.btns{display:flex;gap:8px}
+.pill{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;color:#fff}
+.hero{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stat{background:var(--card);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:26px;font-weight:700}.stat span{font-size:13px;color:var(--tx2)}
+.bar{height:6px;border-radius:3px;background:var(--fill);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;border-radius:3px;background:var(--blue);transition:width .35s ease}
+.card{background:var(--card);border-radius:12px;padding:14px 16px}
+.note{font-size:14px;color:var(--tx2);margin:8px 16px 0}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--bar);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:.5px solid var(--sep);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs div{display:flex;width:100%;max-width:520px}
+.tab{flex:1;border:0;background:none;color:var(--tx2);font:500 10px inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;cursor:pointer}
+.tab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--blue)}
+.view{display:none}.view.on{display:block}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:var(--bg);border-radius:14px 14px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.sheet-bg.on .sheet{transform:none}
+.sheet h3{margin:0 0 12px;text-align:center;font-size:17px}
+input[type=text],input[type=number]{width:100%;border:0;background:var(--card);color:var(--tx);font:17px inherit;font-family:inherit;padding:12px 16px;border-radius:10px;margin-bottom:10px;outline:none}
+.sw{appearance:none;width:51px;height:31px;border-radius:16px;background:var(--fill);position:relative;transition:.2s;flex:none;margin:0}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:.2s}
+.sw:checked{background:var(--green)}.sw:checked::after{left:22px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.gear{border:0;background:var(--fill);color:var(--blue);width:34px;height:34px;border-radius:50%;font-size:17px;cursor:pointer}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translate(-50%,-80px);background:var(--card);color:var(--tx);padding:10px 18px;border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:15px;transition:transform .3s;z-index:9}
+.toast.on{transform:translate(-50%,0)}
+svg text{fill:var(--tx2);font:11px -apple-system,Helvetica,Arial,sans-serif}
+</style></head><body>
+<main>
+
+<section class="view on" id="v-today">
+  <div class="top"><div><h1 id="hi">Today</h1><p class="sub" id="date"></p></div><button class="gear" id="open-set" aria-label="Notification settings">⚙︎</button></div>
+  <div class="hero">
+    <div class="stat"><b id="s-apply">12</b><span>Applied today</span></div>
+    <div class="stat"><b id="s-goals">0%</b><span>Goals done</span></div>
+    <div class="stat"><b id="s-mail">0</b><span>Need action</span></div>
+  </div>
+  <h2>Waiting for your approval</h2>
+  <div class="group" id="approvals"></div>
+  <h2>Priority mail</h2>
+  <div class="group" id="mails"></div>
+  <h2>Today's goals</h2>
+  <div class="group" id="today-goals"></div>
+</section>
+
+<section class="view" id="v-goals">
+  <div class="top"><div><h1>Goals</h1><p class="sub">Tap + to log progress</p></div><button class="btn p" id="add-goal">New goal</button></div>
+  <div class="card"><div style="font-weight:600">Growth this week</div><div class="s" style="white-space:normal">Average goal completion per day</div><svg id="chart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Weekly growth line chart"></svg></div>
+  <h2>Your goals</h2>
+  <div class="group" id="goals"></div>
+</section>
+
+<section class="view" id="v-jobs">
+  <h1>Jobs</h1><p class="sub">Resume shortlist tracker</p>
+  <div class="hero">
+    <div class="stat"><b>41</b><span>Applied this week</span></div>
+    <div class="stat"><b>2</b><span>Shortlisted</span></div>
+    <div class="stat"><b>4.9%</b><span>Shortlist rate</span></div>
+  </div>
+  <h2>Strategy update</h2>
+  <div class="card">
+    <div style="font-weight:600;margin-bottom:4px">Shortlist rate is below your 10% target</div>
+    <div class="s" style="white-space:normal;margin-bottom:10px">Two weeks with no change, so Nexus switched approach:</div>
+    <div class="t" style="font-size:15px">• Rewrite the top summary line for each job description<br>• Move matching keywords into the first half of the resume<br>• Apply before 10 AM, when recruiters are most active<br>• Focus on 6 roles with the best match, not 40 broad ones</div>
+  </div>
+  <h2>Best chances today</h2>
+  <div class="group" id="chances"></div>
+  <h2>Applied today</h2>
+  <div class="group" id="applied"></div>
+</section>
+
+<section class="view" id="v-subs">
+  <h1>Subscriptions</h1><p class="sub" id="subtotal"></p>
+  <div class="group" id="subs"></div>
+  <p class="note">Renewals in the next 7 days are shown first.</p>
+</section>
+</main>
+
+<nav class="tabs"><div>
+  <button class="tab on" data-t="today"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Today</button>
+  <button class="tab" data-t="goals"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg>Goals</button>
+  <button class="tab" data-t="jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Jobs</button>
+  <button class="tab" data-t="subs"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>Subscriptions</button>
+</div></nav>
+
+<div class="sheet-bg" id="sheet-goal"><div class="sheet">
+  <h3>New goal</h3>
+  <input type="text" id="g-name" placeholder="Goal name, e.g. Apply to 10 jobs">
+  <input type="number" id="g-target" placeholder="Daily target, e.g. 10" inputmode="numeric">
+  <div class="btns"><button class="btn grow" data-close>Cancel</button><button class="btn p grow" id="g-save">Add goal</button></div>
+</div></div>
+
+<div class="sheet-bg" id="sheet-set"><div class="sheet">
+  <h3>Notifications</h3>
+  <div class="group">
+    <div class="row"><div class="grow t">App notifications</div><input type="checkbox" class="sw" checked></div>
+    <div class="row"><div class="grow"><div class="t">WhatsApp for urgent items</div><div class="s">Approvals that can't wait</div></div><input type="checkbox" class="sw" checked></div>
+    <div class="row"><div class="grow t">End-of-day summary</div><input type="checkbox" class="sw" checked></div>
+  </div>
+  <p class="note">These switches are a preview. Live alerts need the Nexus server.</p>
+  <div class="btns" style="margin-top:14px"><button class="btn p grow" data-close>Done</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={
+ goals:[{n:'Apply to 10 jobs',t:10,d:6,c:'#007aff'},{n:'Learn 1 hour of SQL',t:1,d:0,c:'#af52de'},{n:'Log every expense',t:1,d:1,c:'#34c759'},{n:'Walk 8,000 steps',t:8000,d:5200,c:'#ff9500',step:1000}],
+ hist:[38,52,47,61,58,66],
+ mails:[{f:'Recruiter, TechNova',s:'Interview slot: confirm by 5 PM',u:1},{f:'HR, Finserve',s:'Share your updated resume',u:0},{f:'Bank',s:'Card bill due in 2 days',u:0}],
+ appr:[{t:'Apply to 6 matched jobs',s:'Resume tailored for each'},{t:'Send follow-up to TechNova',s:'Draft ready'}]
+};
+try{const x=localStorage.getItem('nexus');if(x)S=JSON.parse(x)}catch(e){}
+const save=()=>{try{localStorage.setItem('nexus',JSON.stringify(S))}catch(e){}};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1800)}
+const pct=g=>Math.min(100,Math.round(g.d/g.t*100));
+const avg=()=>S.goals.length?Math.round(S.goals.reduce((a,g)=>a+pct(g),0)/S.goals.length):0;
+
+function render(){
+ const h=new Date().getHours();
+ $('#hi').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+ $('#date').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
+ $('#s-goals').textContent=avg()+'%';
+ $('#s-mail').textContent=S.mails.length+S.appr.length;
+ $('#approvals').innerHTML=S.appr.length?S.appr.map((a,i)=>`<div class="row"><div class="grow"><div class="t">${esc(a.t)}</div><div class="s">${esc(a.s)}</div></div><div class="btns"><button class="btn" data-skip="${i}">Skip</button><button class="btn g" data-ok="${i}">Approve</button></div></div>`).join(''):'<div class="row"><div class="s">Nothing waiting. You are all caught up.</div></div>';
+ $('#mails').innerHTML=S.mails.length?S.mails.map((m,i)=>`<div class="row"><div class="ico" style="background:${m.u?'var(--red)':'var(--blue)'}">${esc(m.f[0])}</div><div class="grow"><div class="t">${esc(m.f)}</div><div class="s">${esc(m.s)}</div></div><button class="btn" data-done="${i}">Done</button></div>`).join(''):'<div class="row"><div class="s">No mail needs action.</div></div>';
+ const tg=S.goals.map((g,i)=>goalRow(g,i)).join('');
+ $('#today-goals').innerHTML=tg||'<div class="row"><div class="s">Add your first goal in the Goals tab.</div></div>';
+ $('#goals').innerHTML=tg||'<div class="row"><div class="s">No goals yet. Tap New goal.</div></div>';
+ chart();
+}
+function goalRow(g,i){const p=pct(g);return `<div class="row"><div class="grow"><div class="t">${esc(g.n)}</div><div class="s">${g.d.toLocaleString()} of ${g.t.toLocaleString()}</div><div class="bar"><i style="width:${p}%;background:${p>=100?'var(--green)':g.c}"></i></div></div><button class="btn" data-inc="${i}" aria-label="Add progress">${p>=100?'✓':'+'}</button></div>`}
+function chart(){
+ const pts=[...S.hist.slice(-6),avg()],days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].slice(0,0);
+ const W=320,H=150,L=28,B=22,n=pts.length;
+ const x=i=>L+i*(W-L-8)/(n-1),y=v=>8+(H-B-8)*(1-v/100);
+ const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+ let s=[0,50,100].map(v=>`<line x1="${L}" x2="${W-8}" y1="${y(v)}" y2="${y(v)}" stroke="var(--sep)" stroke-width=".5"/><text x="0" y="${y(v)+4}">${v}</text>`).join('');
+ s+=`<path d="${d} L${x(n-1)} ${y(0)} L${x(0)} ${y(0)}Z" fill="var(--blue)" opacity=".12"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+ s+=pts.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i==n-1?5:3}" fill="var(--blue)"/>`).join('');
+ s+=pts.map((v,i)=>`<text x="${x(i)}" y="${H-5}" text-anchor="middle">${i==n-1?'Today':'-'+(n-1-i)+'d'}</text>`).join('');
+ $('#chart').innerHTML=s;
+}
+const chances=[['Data Analyst, Infosys','Strong match',86],['Associate Engineer, TCS','Good match',74],['Business Analyst, Wipro','Good match',68],['QA Engineer, HCL','Fair match',52]];
+const applied=[['Data Analyst','Infosys','Applied 9:10'],['Business Analyst','Wipro','Applied 9:25'],['Associate Engineer','TCS','Applied 9:40'],['QA Engineer','HCL','Applied 10:05']];
+$('#chances').innerHTML=chances.map(c=>`<div class="row"><div class="grow"><div class="t">${c[0]}</div><div class="bar"><i style="width:${c[2]}%;background:${c[2]>70?'var(--green)':c[2]>60?'var(--blue)':'var(--orange)'}"></i></div></div><span class="val">${c[2]}%</span></div>`).join('');
+$('#applied').innerHTML=applied.map(a=>`<div class="row"><div class="grow"><div class="t">${a[0]}</div><div class="s">${a[1]}</div></div><span class="val">${a[2]}</span></div>`).join('')+'<div class="row"><div class="s">8 more applied. 12 total today.</div></div>';
+const subs=[['Netflix',649,'Oct 18','#e50914'],['Spotify',119,'Oct 21','#1db954'],['iCloud+',75,'Oct 25','#007aff'],['YouTube Premium',149,'Nov 2','#ff3b30'],['Claude Pro',1950,'Nov 5','#af52de']];
+$('#subs').innerHTML=subs.map(s=>`<div class="row"><div class="ico" style="background:${s[3]}">${s[0][0]}</div><div class="grow"><div class="t">${s[0]}</div><div class="s">Renews ${s[2]}</div></div><span class="val">₹${s[1].toLocaleString()}</span></div>`).join('');
+$('#subtotal').textContent='₹'+subs.reduce((a,s)=>a+s[1],0).toLocaleString()+' per month across '+subs.length+' subscriptions';
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button,.tab');if(!b)return;
+ if(b.dataset.t){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.t));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));scrollTo(0,0);return}
+ if(b.dataset.ok!==undefined){S.appr.splice(+b.dataset.ok,1);toast('Approved')}
+ else if(b.dataset.skip!==undefined){S.appr.splice(+b.dataset.skip,1);toast('Skipped')}
+ else if(b.dataset.done!==undefined){S.mails.splice(+b.dataset.done,1);toast('Marked done')}
+ else if(b.dataset.inc!==undefined){const g=S.goals[+b.dataset.inc];g.d=Math.min(g.t,g.d+(g.step||1));if(g.d>=g.t)toast('Goal complete')}
+ else if(b.id==='add-goal')return $('#sheet-goal').classList.add('on');
+ else if(b.id==='open-set')return $('#sheet-set').classList.add('on');
+ else if(b.id==='g-save'){const n=$('#g-name').value.trim(),t=+$('#g-target').value;if(!n||!(t>0))return toast('Enter a name and a target');S.goals.push({n,t,d:0,c:'#007aff'});$('#g-name').value='';$('#g-target').value='';$('#sheet-goal').classList.remove('on');toast('Goal added')}
+ else if(b.dataset.close!==undefined){b.closest('.sheet-bg').classList.remove('on');return}
+ else return;
+ save();render();
+});
+document.querySelectorAll('.sheet-bg').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.classList.remove('on')}));
+render();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+</body></html>
